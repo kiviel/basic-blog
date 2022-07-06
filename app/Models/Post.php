@@ -10,13 +10,25 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use Sluggable;
+    use HasFactory; //importante para que el seeder se ejecute correctamente
 
     public function sluggable(){
         return [
             'slug' => [
                 'source' => 'title',
                 'onUpdate' => true
-            ];
+            ]
         ];
+    }
+
+    //relacion entre las tablas
+    //esta configuracion especifica que este post pertence a un usuario
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function getGetExcerptAttribute()
+    {
+        return substr($this->body, 0, 140);
     }
 }
