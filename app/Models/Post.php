@@ -12,6 +12,14 @@ class Post extends Model
     use Sluggable;
     use HasFactory; //importante para que el seeder se ejecute correctamente
 
+    protected $fillable = [
+        'title',
+        'body',
+        'image',
+        'iframe',
+        'user_id',
+    ];
+
     public function sluggable(){
         return [
             'slug' => [
