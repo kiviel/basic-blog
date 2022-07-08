@@ -17,7 +17,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">                        
+                    <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label">Titulo *</label>
                             <input type="text" class="form-control" name="title" required />
@@ -32,7 +32,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Contenido embebido</label>
-                            <textarea class="form-control" name="iframe" required></textarea>
+                            <textarea class="form-control" name="iframe"></textarea>
                         </div>
                         <div class="mb-3">
                             @csrf

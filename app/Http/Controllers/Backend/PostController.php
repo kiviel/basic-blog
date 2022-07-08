@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Http\Requests\PostRequest;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -42,12 +43,12 @@ class PostController extends Controller
         //salvar
         $post = Post::create(
             ['user_id' => auth()->user()->id]
-             + $request->all()
+             + $request->validated()
         );
 
         //imagen
-        if($request->$file('file')){
-            $post->image = $request->$file('file')->store('posts', 'public');
+        if($request->file('file')){
+            $post->image = $request->file('file')->store('posts', 'public');
             $post->save();
 
         }
@@ -74,7 +75,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit', ['post' => $post]);
     }
 
     /**
@@ -84,9 +85,24 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+        //salvar
+        $post->update($request->validated());
+
+        //imagen
+        if($request->file('file')){
+            
+            //eliminar la imagen fisicamente
+            Storage::disk('public')->delete((string) $post->image);
+
+            //guardar nueva imagen en storage/ y en la base de datos
+            $post->image = $request->file('file')->store('posts', 'public');
+            $post->save();
+
+        }
+        //retornar
+        return back()->with('status', 'Actualizado con éxito');
     }
 
     /**
@@ -97,6 +113,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        //eliminar imagen
+        Storage::disk('public')->delete((string) $post->image);
+        //Eliminar el registro de la base de datos
+        $post->delete();
+
+        return back()->with('status', 'Eliminado con éxito');
     }
 }
